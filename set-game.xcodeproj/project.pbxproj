@@ -8,17 +8,23 @@
 
 /* Begin PBXBuildFile section */
 		0772E0152822FF7E00F77A22 /* set_gameApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0772E0142822FF7E00F77A22 /* set_gameApp.swift */; };
-		0772E0172822FF7E00F77A22 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0772E0162822FF7E00F77A22 /* ContentView.swift */; };
+		0772E0172822FF7E00F77A22 /* SetGameView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0772E0162822FF7E00F77A22 /* SetGameView.swift */; };
 		0772E0192822FF7F00F77A22 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0772E0182822FF7F00F77A22 /* Assets.xcassets */; };
 		0772E01C2822FF7F00F77A22 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0772E01B2822FF7F00F77A22 /* Preview Assets.xcassets */; };
+		0772E0272823003F00F77A22 /* SetGameViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0772E0262823003F00F77A22 /* SetGameViewModel.swift */; };
+		0772E0292823005100F77A22 /* SetGameModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0772E0282823005100F77A22 /* SetGameModel.swift */; };
+		0772E02B28245BB600F77A22 /* Diamond.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0772E02A28245BB600F77A22 /* Diamond.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		0772E0112822FF7E00F77A22 /* set-game.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "set-game.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		0772E0142822FF7E00F77A22 /* set_gameApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = set_gameApp.swift; sourceTree = "<group>"; };
-		0772E0162822FF7E00F77A22 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		0772E0162822FF7E00F77A22 /* SetGameView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SetGameView.swift; sourceTree = "<group>"; };
 		0772E0182822FF7F00F77A22 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		0772E01B2822FF7F00F77A22 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
+		0772E0262823003F00F77A22 /* SetGameViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SetGameViewModel.swift; sourceTree = "<group>"; };
+		0772E0282823005100F77A22 /* SetGameModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SetGameModel.swift; sourceTree = "<group>"; };
+		0772E02A28245BB600F77A22 /* Diamond.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Diamond.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -52,7 +58,10 @@
 			isa = PBXGroup;
 			children = (
 				0772E0142822FF7E00F77A22 /* set_gameApp.swift */,
-				0772E0162822FF7E00F77A22 /* ContentView.swift */,
+				0772E0162822FF7E00F77A22 /* SetGameView.swift */,
+				0772E02A28245BB600F77A22 /* Diamond.swift */,
+				0772E0262823003F00F77A22 /* SetGameViewModel.swift */,
+				0772E0282823005100F77A22 /* SetGameModel.swift */,
 				0772E0182822FF7F00F77A22 /* Assets.xcassets */,
 				0772E01A2822FF7F00F77A22 /* Preview Content */,
 			);
@@ -137,7 +146,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				0772E0172822FF7E00F77A22 /* ContentView.swift in Sources */,
+				0772E0292823005100F77A22 /* SetGameModel.swift in Sources */,
+				0772E0272823003F00F77A22 /* SetGameViewModel.swift in Sources */,
+				0772E02B28245BB600F77A22 /* Diamond.swift in Sources */,
+				0772E0172822FF7E00F77A22 /* SetGameView.swift in Sources */,
 				0772E0152822FF7E00F77A22 /* set_gameApp.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
