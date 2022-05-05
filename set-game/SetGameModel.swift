@@ -19,12 +19,19 @@ struct SetGameModel {
         cards.shuffle()
     }
     
+    mutating func shuffle() {
+        cards.shuffle()
+    }
+    
     struct Card: Identifiable {
         var symbol: Int
         var color: Int
         var number: Int
         var shading: Int
         var id: String
+        var isShown: Bool = false
+        var selected: Bool = false
+        var set: Bool = false
     }
     
     func generateCard(arrayOfInt: Array<Int>) -> Card  {

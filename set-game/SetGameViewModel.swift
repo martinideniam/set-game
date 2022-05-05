@@ -7,12 +7,16 @@
 
 import Foundation
 
-class SetGameViewModel {
+class SetGameViewModel: ObservableObject {
     
-    var model: SetGameModel
+    @Published var model: SetGameModel = createGame()
     
-    init() {
-        self.model = SetGameModel(numbersGenerator: {
+    func createNewGame() {
+        model = SetGameViewModel.createGame()
+    }
+    
+    private static func createGame() -> SetGameModel {
+        SetGameModel(numbersGenerator: {
             var arrayOfNumbers = [Array<Int>]()
             for symbol in 0...2 {
                 for color in 0...2 {
@@ -28,6 +32,6 @@ class SetGameViewModel {
     }
     
     var cards: Array<SetGameModel.Card> {
-        return model.cards
+        return Array(model.cards)
     }
 }

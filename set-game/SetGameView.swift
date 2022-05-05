@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct SetGameView: View {
-    var viewModel = SetGameViewModel()
+    @ObservedObject var viewModel: SetGameViewModel
     var body: some View {
         VStack {
             ScrollView {
@@ -20,7 +20,7 @@ struct SetGameView: View {
                 }
             }
                 .padding(5)
-            Footer()
+            Footer(viewModel: viewModel)
                 .padding()
         }
     }
@@ -86,6 +86,7 @@ struct CardView: View {
 }
 
 struct Footer: View {
+    @ObservedObject var viewModel: SetGameViewModel
     
     var body: some View {
         HStack {
@@ -97,7 +98,7 @@ struct Footer: View {
     
     var newGameButton: some View {
         Button("New Game") {
-            print("hell")
+            viewModel.createNewGame()
         }
     }
     
@@ -157,6 +158,7 @@ extension View {
 
 struct SetGameView_Previews: PreviewProvider {
     static var previews: some View {
-        SetGameView()
+        let viewModel = SetGameViewModel()
+        SetGameView(viewModel: viewModel)
     }
 }
