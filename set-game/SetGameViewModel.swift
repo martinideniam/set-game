@@ -8,6 +8,7 @@
 import Foundation
 
 class SetGameViewModel: ObservableObject {
+    typealias Card = SetGameModel.Card
     
     @Published var model: SetGameModel = createGame()
     
@@ -31,7 +32,8 @@ class SetGameViewModel: ObservableObject {
         })
     }
     
-    var cards: Array<SetGameModel.Card> {
-        return Array(model.cards)
+    var cards: Array<Card> {
+        model.cards
     }
+    
 }

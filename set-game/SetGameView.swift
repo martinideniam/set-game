@@ -9,22 +9,57 @@ import SwiftUI
 
 struct SetGameView: View {
     @ObservedObject var viewModel: SetGameViewModel
+    typealias Card = SetGameModel.Card
+    @State var howManyCards: Int = 12
+    @State var selected = Array<Card>()
     var body: some View {
         VStack {
             ScrollView {
                 LazyVGrid(columns: [GridItem(.adaptive(minimum: 100, maximum: 100))]) {
-                    ForEach(viewModel.cards) { card in
+                    ForEach(viewModel.cards[0..<howManyCards]) { card in
                         CardView(card: card)
                             .padding(5)
+                            .selected(selected: selected.contains(where: {
+                                $0.id == card.id
+                            }))
+                            .onTapGesture {
+                                if let selectedCardIndex = selected.firstIndex(where: {$0.id == card.id}) {
+                                    selected.remove(at: selectedCardIndex)
+                                } else {
+                                    if selected.count < 3 {
+                                        selected.append(card)
+                                    }
+                                }
+                            }
                     }
                 }
             }
                 .padding(5)
-            Footer(viewModel: viewModel)
+            HStack {
+                newGameButton
+                Spacer()
+                addNewCards
+            }
                 .padding()
         }
     }
+    
+    var newGameButton: some View {
+        Button("New Game") {
+            viewModel.createNewGame()
+            selected = []
+            howManyCards = 12
+        }
+    }
+    
+    var addNewCards: some View {
+        Button("Deal 3 More Cards") {
+            howManyCards += 3
+        }
+    }
 }
+
+
 
 struct CardView: View {
     var card: SetGameModel.Card
@@ -85,30 +120,6 @@ struct CardView: View {
     }
 }
 
-struct Footer: View {
-    @ObservedObject var viewModel: SetGameViewModel
-    
-    var body: some View {
-        HStack {
-            newGameButton
-            Spacer()
-            addNewCards
-        }
-    }
-    
-    var newGameButton: some View {
-        Button("New Game") {
-            viewModel.createNewGame()
-        }
-    }
-    
-    var addNewCards: some View {
-        Button("Deal 3 More Cards") {
-            //
-        }
-    }
-}
-
 struct Colored: ViewModifier {
     var color: Int
     func body(content: Content) -> some View {
@@ -143,12 +154,27 @@ struct Shaded: ViewModifier {
     }
 }
 
+struct Selected: ViewModifier {
+    var selected: Bool
+    func body(content: Content) -> some View {
+        if selected {
+            content
+                .shadow(color: .black, radius: 2, x: 4, y: 4)
+        } else {
+            content
+        }
+    }
+}
+
 extension View {
     func colored(color: Int) -> some View {
         self.modifier(Colored(color: color))
     }
     func shaded(shading: Int) -> some View {
         self.modifier(Shaded(shading: shading))
+    }
+    func selected(selected: Bool) -> some View {
+        self.modifier(Selected(selected: selected))
     }
 }
 
