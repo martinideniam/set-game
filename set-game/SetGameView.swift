@@ -44,6 +44,9 @@ struct SetGameView: View {
     func tapCardFunction(card: Card) {
         if selected.count >= 3 {
             viewModel.dealWithSetCards(selectedCards: selected)
+            if viewModel.checkIfSet(selectedCards: selected) {
+                addNewCardsFunc()
+            }
             selected = []
             selected.append(card)
         } else {
@@ -70,10 +73,14 @@ struct SetGameView: View {
     
     var addNewCards: some View {
         Button("Deal 3 More Cards") {
-            if (howManyCards + 3 <= viewModel.cards.count) {
-                howManyCards += 3
-            }
+            addNewCardsFunc()
         }.opacity((howManyCards == viewModel.cards.count) ? 0.2 : 1)
+    }
+    
+    func addNewCardsFunc() {
+        if (howManyCards + 3 <= viewModel.cards.count) {
+            howManyCards += 3
+        }
     }
 }
 
