@@ -14,31 +14,30 @@ struct SetGameView: View {
     @State var selected = Array<Card>()
     
     var body: some View {
-        VStack {
-            ScrollView {
-                LazyVGrid(columns: [GridItem(.adaptive(minimum: 100, maximum: 100))]) {
-                    ForEach(viewModel.cards[0..<howManyCards], id: \.id) { card in
-                        if !card.set {
-                            CardView(card: card)
-                                .padding(5)
-                                .setOrNot(set: viewModel.checkIfSet(selectedCards: selected), selectedContains: selected.contains(where: {
-                                    $0.id == card.id}), selected: selected)
-                                .selected(selected: selected.contains(where: {
-                                    $0.id == card.id
-                                }))
-                                .onTapGesture { tapCardFunction(card: card) }
-                        }
-                    }
-                }
-            }
+        VStack(alignment: .center, spacing:0) {
+            gameBody
                 .padding(5)
             scoreView
             HStack {
                 newGameButton
                 Spacer()
                 addNewCards
+            }.padding()
+        }
+    }
+    
+    var gameBody: some View {
+        AspectVGrid(items: Array(viewModel.cards[0..<howManyCards]), aspectRatio: 2.6/3) { card in
+            if !card.set {
+                CardView(card: card)
+                    .padding(5)
+                    .setOrNot(set: viewModel.checkIfSet(selectedCards: selected), selectedContains: selected.contains(where: {
+                        $0.id == card.id}), selected: selected)
+                    .selected(selected: selected.contains(where: {
+                        $0.id == card.id
+                    }))
+                    .onTapGesture { tapCardFunction(card: card) }
             }
-                .padding()
         }
     }
     
@@ -71,8 +70,10 @@ struct SetGameView: View {
     
     var addNewCards: some View {
         Button("Deal 3 More Cards") {
-            howManyCards += 3
-        }
+            if (howManyCards + 3 <= viewModel.cards.count) {
+                howManyCards += 3
+            }
+        }.opacity((howManyCards == viewModel.cards.count) ? 0.2 : 1)
     }
 }
 
@@ -86,11 +87,8 @@ struct CardView: View {
                 .stroke(lineWidth: 1)
             Group {
                 returnShapeView(for: card)
-            }
-            .padding(15)
+            }.padding(10)
         }
-        .aspectRatio(CardConstants.aspectRatio,
-                     contentMode: .fit)
     }
     
     @ViewBuilder
@@ -216,7 +214,6 @@ extension View {
         self.modifier(SetOrNot(set: set, selectedContains: selectedContains, selected: selected))
     }
 }
-
 
 
 
