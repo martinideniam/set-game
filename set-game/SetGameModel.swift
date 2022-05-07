@@ -37,4 +37,10 @@ struct SetGameModel {
     }
     
     // intent - functions
+    
+    mutating func cardIsSet(card: Card) {
+        if let cardIndex = cards.firstIndex(where: {$0.id == card.id}) {
+            cards[cardIndex].set = true
+        }
+    }
 }

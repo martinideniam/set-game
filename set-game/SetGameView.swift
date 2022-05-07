@@ -12,29 +12,27 @@ struct SetGameView: View {
     typealias Card = SetGameModel.Card
     @State var howManyCards: Int = 12
     @State var selected = Array<Card>()
+    
     var body: some View {
         VStack {
             ScrollView {
                 LazyVGrid(columns: [GridItem(.adaptive(minimum: 100, maximum: 100))]) {
-                    ForEach(viewModel.cards[0..<howManyCards]) { card in
-                        CardView(card: card)
-                            .padding(5)
-                            .selected(selected: selected.contains(where: {
-                                $0.id == card.id
-                            }))
-                            .onTapGesture {
-                                if let selectedCardIndex = selected.firstIndex(where: {$0.id == card.id}) {
-                                    selected.remove(at: selectedCardIndex)
-                                } else {
-                                    if selected.count < 3 {
-                                        selected.append(card)
-                                    }
-                                }
-                            }
+                    ForEach(viewModel.cards[0..<howManyCards], id: \.id) { card in
+                        if !card.set {
+                            CardView(card: card)
+                                .padding(5)
+                                .setOrNot(set: viewModel.checkIfSet(selectedCards: selected), selectedContains: selected.contains(where: {
+                                    $0.id == card.id}), selected: selected)
+                                .selected(selected: selected.contains(where: {
+                                    $0.id == card.id
+                                }))
+                                .onTapGesture { tapCardFunction(card: card) }
+                        }
                     }
                 }
             }
                 .padding(5)
+            scoreView
             HStack {
                 newGameButton
                 Spacer()
@@ -44,11 +42,30 @@ struct SetGameView: View {
         }
     }
     
+    func tapCardFunction(card: Card) {
+        if selected.count >= 3 {
+            viewModel.dealWithSetCards(selectedCards: selected)
+            selected = []
+            selected.append(card)
+        } else {
+            if let selectedCardIndex = selected.firstIndex(where: {$0.id == card.id}) {
+                selected.remove(at: selectedCardIndex)
+            } else {
+                selected.append(card)
+            }
+        }
+    }
+    
+    var scoreView: some View {
+        Text("Ur score: \(viewModel.score) points")
+    }
+    
     var newGameButton: some View {
         Button("New Game") {
             viewModel.createNewGame()
             selected = []
             howManyCards = 12
+            viewModel.resetScore()
         }
     }
     
@@ -79,7 +96,7 @@ struct CardView: View {
     @ViewBuilder
     func returnShapeView(for card: SetGameModel.Card) -> some View {
         VStack {
-            ForEach(0..<card.number) { _ in
+            ForEach(0..<card.number, id: \.self) { _ in
                 switch card.symbol {
                     case 0:
                         ZStack {
@@ -154,12 +171,31 @@ struct Shaded: ViewModifier {
     }
 }
 
+struct SetOrNot: ViewModifier {
+    var set: Bool
+    var selectedContains: Bool
+    var selected: Array<SetGameModel.Card>
+    func body(content: Content) -> some View {
+        if selected.count == 3 && selectedContains == true {
+            if set {
+                content
+                    .background(.green.opacity(0.1))
+            } else {
+                content
+                    .background(.red.opacity(0.1))
+            }
+        } else {
+            content
+        }
+    }
+}
+
 struct Selected: ViewModifier {
     var selected: Bool
     func body(content: Content) -> some View {
         if selected {
             content
-                .shadow(color: .black, radius: 2, x: 4, y: 4)
+                .shadow(color: .black, radius: 1, x:1, y: 1)
         } else {
             content
         }
@@ -175,6 +211,9 @@ extension View {
     }
     func selected(selected: Bool) -> some View {
         self.modifier(Selected(selected: selected))
+    }
+    func setOrNot(set: Bool, selectedContains: Bool, selected: Array<SetGameModel.Card>) -> some View {
+        self.modifier(SetOrNot(set: set, selectedContains: selectedContains, selected: selected))
     }
 }
 
