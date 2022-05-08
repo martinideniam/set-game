@@ -10,9 +10,11 @@ import SwiftUI
 struct SetGameView: View {
     @ObservedObject var viewModel: SetGameViewModel
     typealias Card = SetGameModel.Card
+    @Namespace private var dealingNameSpace
     @State var howManyCards: Int = 12
     @State var dealt = Array<Card>()
     @State var selected = Array<Card>()
+    @State var animate = false
     
     var body: some View {
         VStack(alignment: .center, spacing:0) {
@@ -28,7 +30,7 @@ struct SetGameView: View {
     }
     
     var gameBody: some View {
-        AspectVGrid(items: Array(viewModel.cards), aspectRatio: Constants.aspectRatio) { card in
+        AspectVGrid(items: Array(viewModel.cards[0..<howManyCards]), aspectRatio: Constants.aspectRatio) { card in
             if !card.set && isDealt(card) {
                 CardView(card: card)
                     .padding(5)
@@ -37,8 +39,11 @@ struct SetGameView: View {
                     .selected(selected: selected.contains(where: {
                         $0.id == card.id
                     }))
+                    .animation(Animation.easeInOut(duration: 2), value: animate)
+                    .matchedGeometryEffect(id: card.id, in: dealingNameSpace)
+                    .transition(AnyTransition.asymmetric(insertion: .identity, removal: .identity))
                     .onTapGesture {
-                        withAnimation(Animation.easeIn(duration: 0.1)) {
+                        withAnimation(Animation.easeIn(duration: 1)) {
                             tapCardFunction(card: card)
                         }
                     }
@@ -50,6 +55,8 @@ struct SetGameView: View {
         ZStack {
             ForEach(viewModel.cards.filter { $0.set } ) { card in
                 CardView(card: card)
+                    .matchedGeometryEffect(id: card.id, in: dealingNameSpace)
+                    .transition(AnyTransition.asymmetric(insertion: .opacity, removal: .opacity))
             }
         }
         .frame(width: Constants.width, height: Constants.height)
@@ -60,11 +67,27 @@ struct SetGameView: View {
         ZStack {
             ForEach(viewModel.cards.filter { !isDealt($0) } ) { card in
                 CardView(card: card)
+                    .matchedGeometryEffect(id: card.id, in: dealingNameSpace)
+                    .transition(AnyTransition.asymmetric(insertion: .scale, removal: .scale))
             }
         }
         .frame(width: Constants.width, height: Constants.height)
         .onTapGesture {
-            dealCards()
+            let undealtCards = viewModel.cards.filter({!isDealt($0)})
+            withAnimation(Animation.easeIn(duration: 1)) {
+                if undealtCards.count == viewModel.cards.count {
+                    for card in undealtCards[0..<howManyCards] {
+                        dealCard(card: card)
+                    }
+                } else {
+                    addNewCardsFunc()
+                    if (howManyCards + 3 <= viewModel.cards.count) {
+                        for card in undealtCards[0..<3] {
+                            dealCard(card: card)
+                        }
+                    }
+                }
+            }
         }
     }
     
@@ -72,12 +95,9 @@ struct SetGameView: View {
         return dealt.contains(where: {$0.id == card.id})
     }
     
-    func dealCards() {
-        let undealtCards = viewModel.cards.filter({!isDealt($0)})
-        for card in undealtCards {
-            viewModel.cardIsFacedUp(card: card)
-            dealt.append(card)
-        }
+    func dealCard(card: Card) {
+        dealt.append(card)
+        viewModel.cardIsFacedUp(card: card)
     }
     
     func tapCardFunction(card: Card) {
@@ -94,6 +114,9 @@ struct SetGameView: View {
             } else {
                 selected.append(card)
             }
+            if (selected.count >= 3) && (viewModel.checkIfSet(selectedCards: selected)) {
+                animate = true
+            }
         }
     }
     
@@ -108,12 +131,6 @@ struct SetGameView: View {
             howManyCards = 12
             viewModel.resetScore()
         }
-    }
-    
-    var addNewCards: some View {
-        Button("Deal 3 More Cards") {
-            addNewCardsFunc()
-        }.opacity((howManyCards == viewModel.cards.count) ? 0.2 : 1)
     }
     
     func addNewCardsFunc() {
@@ -238,10 +255,10 @@ struct SetOrNot: ViewModifier {
         if selected.count == 3 && selectedContains == true {
             if set {
                 content
-                    .background(.green.opacity(0.1))
+                    .background(.green.opacity(0.2))
             } else {
                 content
-                    .background(.red.opacity(0.1))
+                    .background(.red.opacity(0.2))
             }
         } else {
             content
@@ -254,7 +271,7 @@ struct Selected: ViewModifier {
     func body(content: Content) -> some View {
         if selected {
             content
-                .shadow(color: .black, radius: 1, x:1, y: 1)
+                .shadow(color: .black, radius: 2, x:2, y: 2)
         } else {
             content
         }
