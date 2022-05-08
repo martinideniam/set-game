@@ -86,6 +86,10 @@ class SetGameViewModel: ObservableObject {
         model.cardIsSet(card: card)
     }
     
+    func cardIsFacedUp(card: Card) {
+        model.cardIsFacedUp(card: card)
+    }
+    
     var cards: Array<Card> {
         model.cards
     }

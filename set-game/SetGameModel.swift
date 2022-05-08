@@ -25,6 +25,7 @@ struct SetGameModel {
         var number: Int
         var shading: Int
         var id: String
+        var facedUp: Bool = false
         var set: Bool = false
     }
     
@@ -41,6 +42,12 @@ struct SetGameModel {
     mutating func cardIsSet(card: Card) {
         if let cardIndex = cards.firstIndex(where: {$0.id == card.id}) {
             cards[cardIndex].set = true
+        }
+    }
+    
+    mutating func cardIsFacedUp(card: Card) {
+        if let cardIndex = cards.firstIndex(where: {$0.id == card.id}) {
+            cards[cardIndex].facedUp = true
         }
     }
 }

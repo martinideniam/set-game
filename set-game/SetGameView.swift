@@ -11,6 +11,7 @@ struct SetGameView: View {
     @ObservedObject var viewModel: SetGameViewModel
     typealias Card = SetGameModel.Card
     @State var howManyCards: Int = 12
+    @State var dealt = Array<Card>()
     @State var selected = Array<Card>()
     
     var body: some View {
@@ -19,16 +20,16 @@ struct SetGameView: View {
                 .padding(5)
             scoreView
             HStack {
-                newGameButton
+                dealtPile
                 Spacer()
-                addNewCards
+                undealtPile
             }.padding()
         }
     }
     
     var gameBody: some View {
-        AspectVGrid(items: Array(viewModel.cards[0..<howManyCards]), aspectRatio: 2.6/3) { card in
-            if !card.set {
+        AspectVGrid(items: Array(viewModel.cards), aspectRatio: Constants.aspectRatio) { card in
+            if !card.set && isDealt(card) {
                 CardView(card: card)
                     .padding(5)
                     .setOrNot(set: viewModel.checkIfSet(selectedCards: selected), selectedContains: selected.contains(where: {
@@ -36,8 +37,46 @@ struct SetGameView: View {
                     .selected(selected: selected.contains(where: {
                         $0.id == card.id
                     }))
-                    .onTapGesture { tapCardFunction(card: card) }
+                    .onTapGesture {
+                        withAnimation(Animation.easeIn(duration: 0.1)) {
+                            tapCardFunction(card: card)
+                        }
+                    }
             }
+        }
+    }
+    
+    var dealtPile: some View {
+        ZStack {
+            ForEach(viewModel.cards.filter { $0.set } ) { card in
+                CardView(card: card)
+            }
+        }
+        .frame(width: Constants.width, height: Constants.height)
+    }
+    
+    
+    var undealtPile: some View {
+        ZStack {
+            ForEach(viewModel.cards.filter { !isDealt($0) } ) { card in
+                CardView(card: card)
+            }
+        }
+        .frame(width: Constants.width, height: Constants.height)
+        .onTapGesture {
+            dealCards()
+        }
+    }
+    
+    func isDealt(_ card: Card) -> Bool {
+        return dealt.contains(where: {$0.id == card.id})
+    }
+    
+    func dealCards() {
+        let undealtCards = viewModel.cards.filter({!isDealt($0)})
+        for card in undealtCards {
+            viewModel.cardIsFacedUp(card: card)
+            dealt.append(card)
         }
     }
     
@@ -82,6 +121,12 @@ struct SetGameView: View {
             howManyCards += 3
         }
     }
+    
+    struct Constants {
+        static var height: CGFloat = 100
+        static var width: CGFloat = height*aspectRatio
+        static var aspectRatio: CGFloat = 2.6/3
+    }
 }
 
 
@@ -90,11 +135,20 @@ struct CardView: View {
     var card: SetGameModel.Card
     var body: some View {
         ZStack {
-            RoundedRectangle(cornerRadius: 10)
-                .stroke(lineWidth: 1)
-            Group {
-                returnShapeView(for: card)
-            }.padding(10)
+            if card.facedUp {
+                RoundedRectangle(cornerRadius: 10)
+                    .fill(.white)
+                RoundedRectangle(cornerRadius: 10)
+                    .stroke(lineWidth: 1)
+                Group {
+                    returnShapeView(for: card)
+                }.padding(10)
+            } else {
+                RoundedRectangle(cornerRadius: 10)
+                    .fill(.white)
+                RoundedRectangle(cornerRadius: 10)
+                    .stroke(lineWidth: 1)
+            }
         }
     }
     
